@@ -5,9 +5,15 @@ from ..Item.AoKaiItems import AoKaiItems
 
 class AoKaiSpider(scrapy.Spider):
     name = 'AoKai'
-    start_urls = [
-        'http://okair.feeyo.com/flightDynamic/index.php?fnum='
-    ]
+
+    def start_requests(self):
+        url = 'http://okair.feeyo.com/flightDynamic/index.php?fnum=' + self.flightNo
+        yield scrapy.Request(url=url, callback=self.parse)
+
+    def __init__(self, flightNo=None, flightDate=None, *args, **kwargs):
+        super(AoKaiSpider, self).__init__(*args, **kwargs)
+        self.flightNo = flightNo
+        self.flightDate = flightDate
 
     def parse(self, response):
         selector = scrapy.Selector(response)

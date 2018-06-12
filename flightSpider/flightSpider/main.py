@@ -4,5 +4,6 @@ import sys
 import os
 
 # execute(["scrapy", "crawl", "Qingdao"])
-
-execute(["scrapy", "crawl", "KunMing"])
+flightNo = 'GY7107'
+flightDate = "2018-06-11"
+execute(["scrapy", "crawl", "GuiZhou", '-a', 'flightNo=' + flightNo,'flightDate='+flightDate])

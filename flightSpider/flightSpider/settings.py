@@ -31,7 +31,7 @@ NEWSPIDER_MODULE = 'flightSpider.spiders'
 ROBOTSTXT_OBEY = False
 
 MYSQL_HOST = 'localhost'
-MYSQL_DBNAME = 'flightspider'
+MYSQL_DBNAME = 'flightspider2'
 MYSQL_USER = 'root'
 MYSQL_PASSWD = '1234'
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
@@ -46,7 +46,7 @@ DOWNLOAD_DELAY = 1
 CONCURRENT_REQUESTS_PER_IP = 1
 
 # Disable cookies (enabled by default)
-COOKIES_ENABLED = True
+COOKIES_ENABLED = False
 
 # Disable Telnet Console (enabled by default)
 # TELNETCONSOLE_ENABLED = False
@@ -68,7 +68,7 @@ SPIDER_MIDDLEWARES = {
 DOWNLOADER_MIDDLEWARES = {
     'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
     'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': None,
-    # 'scrapy.downloadermiddlewares.defaultheaders.DefaultHeadersMiddleware': None,
+    'scrapy.downloadermiddlewares.defaultheaders.DefaultHeadersMiddleware': None,
     'flightSpider.middlewares.RamdomUserAgentMiddleware.RamdomUserAgentMiddleware': 2,
     'flightSpider.middlewares.MyproxiesSpiderMiddleware.MyproxiesSpiderMiddleware': 1,
 }
@@ -84,9 +84,10 @@ DOWNLOADER_MIDDLEWARES = {
 ITEM_PIPELINES = {
     # 'flightSpider.pipelines.LiaoxuefengPipeline': 300,
     #  'flightSpider.pipelines.TuniuPipeline':1
-    'flightSpider.pipelines.FlightSpiderPipeline': 1
+    'flightSpider.pipelines.FlightSpiderPipeline': 2,
+    # 'flightSpider.pipeline.FuZhouCaptchaPipeline.FuZhouCaptchaPipeline': 1
 }
-
+IMAGES_STORE = 'images'   #存储图片的文件夹位置
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://doc.scrapy.org/en/latest/topics/autothrottle.html
 # AUTOTHROTTLE_ENABLED = True

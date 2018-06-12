@@ -14,10 +14,15 @@ class GuoHangSpider(scrapy.Spider):
     # start_urls = [
     #     'http://www.airchina.com.cn/www/FlightEsbServlet.do?callback=&depDate=2018-06-04&departAirport'
     #     '=&arrivedAirport=&companyCode=CA&flightNO=CA1832&requesttype=flight&language=CN&_=1528093713176']
+    def __init__(self, flightNo=None, flightDate=None, *args, **kwargs):
+        super(GuoHangSpider, self).__init__(*args, **kwargs)
+        self.flightNo = flightNo
+        self.flightDate = flightDate
 
     def start_requests(self):
-        url = 'http://www.airchina.com.cn/www/FlightEsbServlet.do?callback=&depDate=2018-06-04&departAirport' \
-              '=&arrivedAirport=&companyCode=CA&flightNO=CA1832&requesttype=flight&language=CN&_=' + str(
+        url = 'http://www.airchina.com.cn/www/FlightEsbServlet.do?callback=&depDate=' + self.flightDate
+        '&departAirport' \
+        '=&arrivedAirport=&companyCode=CA&flightNO=' + self.flightNo + '&requesttype=flight&language=CN&_=' + str(
             int(round(time.time() * 1000)))
         headers = {
             'User-Agent': 'Mozilla/5.0(Macintosh;U;IntelMacOSX10_6_8;en-us)AppleWebKit/534.50(KHTML,likeGecko)Version/5.1Safari/534.50'

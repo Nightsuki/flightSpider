@@ -4,6 +4,7 @@
 #
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: https://doc.scrapy.org/en/latest/topics/item-pipeline.html
+import logging
 from logging import log
 
 import pymysql
@@ -32,6 +33,11 @@ class FlightSpiderPipeline(object):
 
     def process_item(self, item, spider):
         try:
+            # 删除数据
+            self.cursor.execute(
+                """delete from flightInfo where airline = %s""",
+                (item['airline'])
+            )
             # 插入数据
             self.cursor.execute(
                 """insert into flightInfo(expectedDepartureTime, expectedArrivalTime, actualDepartureTime, actualArrivalTime ,status,airline,airlineCorp)
@@ -51,5 +57,5 @@ class FlightSpiderPipeline(object):
 
         except Exception as error:
             # 出现错误时打印错误日志
-            log(error.msg)
+            logging.error(error)
         return item
