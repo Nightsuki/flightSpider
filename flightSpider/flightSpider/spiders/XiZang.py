@@ -7,10 +7,15 @@ from ..Item.XiZangItems import XiZangItems
 class XiZangSpider(scrapy.Spider):
     name = 'XiZang'
 
+    def __init__(self, flightNo=None, flightDate=None, *args, **kwargs):
+        super(XiZangSpider, self).__init__(*args, **kwargs)
+        self.flightNo = flightNo
+        self.flightDate = flightDate
+
     def start_requests(self):
-        flightNO = 'TV6019'
-        flightDate = '2018-06-07'
-        url = 'https://www.tibetairlines.com.cn/tibetair/foc/findByFltNos.do?flightNO=' + flightNO + '&flightDate=' + flightDate
+        # flightNO = 'TV6019'
+        # flightDate = '2018-06-07'
+        url = 'https://www.tibetairlines.com.cn/tibetair/foc/findByFltNos.do?flightNO=' + self.flightNo + '&flightDate=' + self.flightDate
         yield scrapy.Request(url=url, callback=self.parse)
 
     def parse(self, response):
@@ -35,4 +40,3 @@ class XiZangSpider(scrapy.Spider):
             item['actArrTime'] = actArrTime
             yield item
         pass
-

@@ -18,13 +18,18 @@ statusMsg = {
 class DongHaiSpider(scrapy.Spider):
     name = "DongHai"
 
+    def __init__(self, flightNo=None, flightDate=None, *args, **kwargs):
+        super(DongHaiSpider, self).__init__(*args, **kwargs)
+        self.flightNo = flightNo
+        self.flightDate = flightDate
+
     def start_requests(self):
         url = "http://b2capi.donghaiair.cn/flight/getFlightByNo"
-        flightNo = 'DZ6257'
-        flightDate = '2018-06-06'
+        # flightNo = 'DZ6257'
+        # flightDate = '2018-06-06'
         yield scrapy.FormRequest(
             url=url,
-            formdata={"flightNo": flightNo, "flightDate": flightDate,
+            formdata={"flightNo": self.flightNo, "flightDate": self.flightDate,
                       "language": "zh-CN"},
             callback=self.parse
         )

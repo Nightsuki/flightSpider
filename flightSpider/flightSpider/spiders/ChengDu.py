@@ -1,3 +1,5 @@
+import datetime
+
 import scrapy
 
 from ..Item.ChengDuItems import ChengDuItems
@@ -6,11 +8,21 @@ from ..Item.ChengDuItems import ChengDuItems
 class ChengDuSpider(scrapy.Spider):
     name = "ChengDu"
 
+    def __init__(self, flightNo=None, flightDate=None, *args, **kwargs):
+        super(ChengDuSpider, self).__init__(*args, **kwargs)
+        self.flightNo = flightNo
+        flightDate = datetime.datetime.strptime(flightDate, '%Y-%m-%d')
+        year = str(int(flightDate.strftime('%Y')))
+        month = str(int(flightDate.strftime('%m')))
+        day = str(int(flightDate.strftime('%d')))
+        flightDate = year + '/' + month + '/' + day
+        self.flightDate = flightDate
+
     def start_requests(self):
         url = "http://www.chengduair.cc/service_4.asp"
         formData = {
-            "hbh": "2251",
-            "hbtime": "2018/6/7",
+            "hbh": self.flightNo[2:],
+            "hbtime": self.flightDate,
             "subform.x": "35",
             "subform.y": "3"
         }

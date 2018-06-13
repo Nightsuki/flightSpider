@@ -18,6 +18,15 @@ class FlightDao(object):
         # 通过cursor执行增删查改
         self.cursor = self.connect.cursor(cursor=pymysql.cursors.DictCursor)
 
+    def clearFlight(self, airline):
+        # 删除旧数据
+        self.cursor.execute(
+            """delete from flightInfo where airline = %s""",
+            airline
+        )
+        # 提交sql语句
+        self.connect.commit()
+
     def searchFlight(self, airline):
         try:
             sql = 'SELECT * FROM flightInfo WHERE airline = %s'

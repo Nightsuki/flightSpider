@@ -1,4 +1,5 @@
 # coding=utf-8
+import datetime
 import json
 
 import scrapy
@@ -8,10 +9,15 @@ from ..Item.XiaMenItems import XiaMenItems
 class XiaMenSpider(scrapy.Spider):
     name = "XiaMen"
 
+    def __init__(self, flightNo=None, flightDate=None, *args, **kwargs):
+        super(XiaMenSpider, self).__init__(*args, **kwargs)
+        self.flightNo = flightNo
+        self.flightDate = flightDate
+
     def start_requests(self):
         # todo
         # 航班号和航班时间  动态传参
-        url = 'https://new.xiamenair.com/api/flight-dynamic/flightno/search?fnumber=MF8531&date=2018-06-06'
+        url = 'https://new.xiamenair.com/api/flight-dynamic/flightno/search?fnumber='+self.flightNo+'&date='+self.flightDate
         yield scrapy.Request(url=url, callback=self.parse)
 
     def parse(self, response):

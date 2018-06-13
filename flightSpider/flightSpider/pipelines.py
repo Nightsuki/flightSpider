@@ -33,11 +33,6 @@ class FlightSpiderPipeline(object):
 
     def process_item(self, item, spider):
         try:
-            # 删除数据
-            self.cursor.execute(
-                """delete from flightInfo where airline = %s""",
-                (item['airline'])
-            )
             # 插入数据
             self.cursor.execute(
                 """insert into flightInfo(expectedDepartureTime, expectedArrivalTime, actualDepartureTime, actualArrivalTime ,status,airline,airlineCorp)

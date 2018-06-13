@@ -8,9 +8,14 @@ from ..Item.SiChuanItems import SiChuanItems
 class SiChuanSpider(scrapy.Spider):
     name = 'SiChuan'
 
+    def __init__(self, flightNo=None, flightDate=None, *args, **kwargs):
+        super(SiChuanSpider, self).__init__(*args, **kwargs)
+        self.flightNo = flightNo
+        self.flightDate = flightDate
+
     def start_requests(self):
         url = "http://m.sichuanair.com/tribe-touch-web-h5/tribe/flight/flightStatus"
-        data = {"body": {"conditionList": [{"flightNo": "3U8896", "flightDate": "2018-06-07"}]},
+        data = {"body": {"conditionList": [{"flightNo": self.flightNo, "flightDate":self.flightDate}]},
                 "head": {"platformId": 3}}
         yield scrapy.Request(url, method="POST", body=json.dumps(data), headers={'Content-Type': 'application/json'},
                              callback=self.parse)

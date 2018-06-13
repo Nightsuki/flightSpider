@@ -9,16 +9,22 @@ from ..Item.DongFangItems import DongFangItems
 class DongFangSpider(scrapy.Spider):
     name = "DongFang"
 
+    def __init__(self, flightNo=None, flightDate=None, *args, **kwargs):
+        super(DongFangSpider, self).__init__(*args, **kwargs)
+        self.flightNo = flightNo
+        self.flightDate = flightDate
+
     def start_requests(self):
         url = "https://m.ceair.com/mobile/aoc/aoc!flightInfoDetail.shtml"
-        flightNo = 'MU5101'
-        flightDate = '2018-06-06'
+        # flightNo = 'MU5101'
+        # flightDate = '2018-06-06'
         UA = 'Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) ' \
              'Version/11.0 Mobile/15A372 Safari/604.1 '
         yield scrapy.FormRequest(
             url=url,
             headers={'User-Agent': UA},
-            formdata={"cond.queryFlightno": flightNo[2:], "cond.queryFlightDate": flightDate, "queryCxr": "MU",
+            formdata={"cond.queryFlightno": self.flightNo[2:], "cond.queryFlightDate": self.flightDate,
+                      "queryCxr": "MU",
                       "transitTag": "undefined"},
             callback=self.parse
         )

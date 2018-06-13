@@ -20,8 +20,7 @@ class GuoHangSpider(scrapy.Spider):
         self.flightDate = flightDate
 
     def start_requests(self):
-        url = 'http://www.airchina.com.cn/www/FlightEsbServlet.do?callback=&depDate=' + self.flightDate
-        '&departAirport' \
+        url = 'http://www.airchina.com.cn/www/FlightEsbServlet.do?callback=&depDate=' + self.flightDate +'&departAirport' \
         '=&arrivedAirport=&companyCode=CA&flightNO=' + self.flightNo + '&requesttype=flight&language=CN&_=' + str(
             int(round(time.time() * 1000)))
         headers = {

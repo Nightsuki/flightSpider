@@ -5,8 +5,11 @@ from ..Item.JiangXiItems import JiangXiItems
 
 class JiangXiSpider(scrapy.Spider):
     name = 'JiangXi'
-    flightNo = 'RY8918'
-    flightDate = '2018-06-12'
+
+    def __init__(self, flightNo=None, flightDate=None, *args, **kwargs):
+        super(JiangXiSpider, self).__init__(*args, **kwargs)
+        self.flightNo = flightNo
+        self.flightDate = flightDate
 
     def start_requests(self):
         url = 'http://www.airjiangxi.com/jiangxiair/flight-dynamic/flightSearch.action?flightTabs=1&flightNo=' + self.flightNo + '&depDate=' + self.flightDate
