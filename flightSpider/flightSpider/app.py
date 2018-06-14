@@ -2,7 +2,6 @@ import logging
 import os
 
 from flask import Flask, jsonify, abort, signals
-
 from flightSpider.flightSpider.dao.FlightDao import FlightDao
 
 app = Flask(__name__)
@@ -13,12 +12,12 @@ spiders = {
     "SC": "ShanDong",
     "BK": "AoKai",
     "HU": "HaiNan",
-    # "JD": "JinLu",
+    "JD": "ShouDu",
     "GS": "HaiNan",
     "CN": "HaiNan",
     # "PN": "HaiNan",
     # "8L": "HaiNan",
-    "JD": "HaiNan",
+    # "JD": "HaiNan",
     "UO": "HaiNan",
     "HX": "HaiNan",
     "MF": "XiaMen",
@@ -35,6 +34,7 @@ spiders = {
     "DZ": "DongHai",
     "QW": "QingDao",
     "RY": "JiangXi",
+    "ZH": "ShenZhen",
 }
 
 
@@ -54,8 +54,7 @@ def getFlightInfo(flightNo, flightDate):
     except Exception as error:
         # 出现错误时打印错误日志
         logging.error(error)
-        result = error
-        return jsonify({'error': '未知错误'})
+        return jsonify({'error_code': '401', 'error': '未知错误'})
     # if len(result) == 0:
     #     abort(404)
 

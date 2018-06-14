@@ -17,7 +17,7 @@ statusMsg = {
 
 
 class JinLuSpider(scrapy.Spider):
-    name = "JinLu"
+    name = "ShouDu"
 
     def __init__(self, flightNo=None, flightDate=None, *args, **kwargs):
         super(JinLuSpider, self).__init__(*args, **kwargs)
