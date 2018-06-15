@@ -16,8 +16,17 @@ class ShenZhenSpider(scrapy.Spider):
 
     def start_requests(self):
         url = "http://m.shenzhenair.com/weixin_front/flightDynamics.do?method=getFlightListByFlightNo"
+        headers = {
+            "Accept": "application/json, text/javascript, */*;q=0.01",
+            "Accept-Encoding": "gzip,deflate",
+            "Accept-Language:": "zh-CN,zh;q=0.9,en;q=0.8",
+            "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+            "Referer": "http://m.shenzhenair.com/webresource-micro/flightDyna.html",
+            "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1"
+        }
         yield scrapy.FormRequest(url=url,
-                                 formdata={"flightNo": self.flightNo, "date": self.flightDate, "onoff": "false"})
+                                 formdata={"flightNo": self.flightNo, "date": self.flightDate, "onoff": "false"},
+                                 headers=headers)
 
     def parse(self, response):
         print(bytes.decode(response.body))

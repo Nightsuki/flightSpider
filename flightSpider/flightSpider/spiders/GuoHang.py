@@ -1,3 +1,4 @@
+import datetime
 import json
 import re
 import time
@@ -20,8 +21,8 @@ class GuoHangSpider(scrapy.Spider):
         self.flightDate = flightDate
 
     def start_requests(self):
-        url = 'http://www.airchina.com.cn/www/FlightEsbServlet.do?callback=&depDate=' + self.flightDate +'&departAirport' \
-        '=&arrivedAirport=&companyCode=CA&flightNO=' + self.flightNo + '&requesttype=flight&language=CN&_=' + str(
+        url = 'http://www.airchina.com.cn/www/FlightEsbServlet.do?callback=&depDate=' + self.flightDate + '&departAirport' \
+                                                                                                          '=&arrivedAirport=&companyCode=CA&flightNO=' + self.flightNo + '&requesttype=flight&language=CN&_=' + str(
             int(round(time.time() * 1000)))
         headers = {
             'User-Agent': 'Mozilla/5.0(Macintosh;U;IntelMacOSX10_6_8;en-us)AppleWebKit/534.50(KHTML,likeGecko)Version/5.1Safari/534.50'
@@ -33,6 +34,7 @@ class GuoHangSpider(scrapy.Spider):
         item = GuoHangItems()
         js = response.body.decode('utf-8')
         pattern = re.compile(r'^\(\'(.*)\'\)\;$')
+
         match = pattern.match(js)
         if match:
             js = match.group(1)
@@ -43,14 +45,27 @@ class GuoHangSpider(scrapy.Spider):
         flightLegInfoEntity = flightInfoDetailEntity['flightLegInfoEntity'][0]
         print(flightLegInfoEntity)
 
-        item['airlineCorp'] = airlineCorp
-        # airline = selector.xpath('//*[@id="content"]/div/div/div[4]/table/tbody/tr/td[1]/span[2]/text()').extract()[0]
-        item['airline'] = flightLegInfoEntity['flightNumber']
-        item['expDeptTime'] = flightLegInfoEntity['scheduledDepartureDateTime']
-        item['expArrTime'] = flightLegInfoEntity['scheduledArrivalDateTime']
-        item['actDeptTime'] = flightLegInfoEntity['actualDepartureDateTime']
-        item['actArrTime'] = flightLegInfoEntity['actualArrivalDateTime']
-        item['status'] = flightLegInfoEntity['status']
-        yield item
+        airlineCorp = airlineCorp
+        airline = flightLegInfoEntity['flightNumber']
+        expDeptTime = datetime.datetime.strptime(flightLegInfoEntity['scheduledDepartureDateTime'],
+                                                 '%Y-%m-%d %H:%M').strftime("%Y-%m-%d %H:%M:%S")
+        expArrTime = datetime.datetime.strptime(flightLegInfoEntity['scheduledArrivalDateTime'],
+                                                '%Y-%m-%d %H:%M').strftime("%Y-%m-%d %H:%M:%S")
 
-        pass
+        actDeptTime = flightLegInfoEntity['actualDepartureDateTime']
+        if actDeptTime != '--':
+            actDeptTime = datetime.datetime.strptime(actDeptTime, '%Y-%m-%d %H:%M').strftime("%Y-%m-%d %H:%M:%S")
+
+        actArrTime = flightLegInfoEntity['actualArrivalDateTime']
+        if actArrTime != '--':
+            actArrTime = datetime.datetime.strptime(actArrTime, '%Y-%m-%d %H:%M').strftime("%Y-%m-%d %H:%M:%S")
+        status = flightLegInfoEntity['status']
+
+        item['airline'] = airline
+        item['expDeptTime'] = expDeptTime
+        item['airlineCorp'] = airlineCorp
+        item['expArrTime'] = expArrTime
+        item['status'] = status
+        item['actDeptTime'] = actDeptTime
+        item['actArrTime'] = actArrTime
+        yield item

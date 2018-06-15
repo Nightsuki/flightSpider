@@ -65,6 +65,3 @@ class JiXiangSpider(scrapy.Spider):
         actArrTime = airlineInfo['FlightArrtimeReadyDate']
         item['actArrTime'] = actArrTime
         yield item
-        print(airline)
-
-        pass

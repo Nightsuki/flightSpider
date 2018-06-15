@@ -1,5 +1,7 @@
 # coding=utf-8
+import datetime
 import json
+import logging
 
 import scrapy
 from ..Item.SiChuanItems import SiChuanItems
@@ -22,14 +24,39 @@ class SiChuanSpider(scrapy.Spider):
 
     def parse(self, response):
         js = json.loads(response.body)
+        logging.info(js)
+        flightDate = datetime.datetime.strptime(self.flightDate, '%Y-%m-%d')
         flights = js['body']['flightStatusItemList']
         for flight in flights:
             item = SiChuanItems()
             airline = flight['flightNo']
             expDeptTime = flight['planTakeoffTime']
             expArrTime = flight['planArriveTime']
-            actDeptTime = flight['actualTakeoffTime']
-            actArrTime = flight['actualArriveTime']
+            expDeptTime = datetime.datetime(flightDate.year, flightDate.month, flightDate.day,
+                                            int(expDeptTime.split(':')[0]),
+                                            int(expDeptTime.split(':')[1]))
+            expArrTime = datetime.datetime(flightDate.year, flightDate.month, flightDate.day,
+                                           int(expArrTime.split(':')[0]),
+                                           int(expArrTime.split(':')[1]))
+            if expDeptTime > expArrTime:
+                expArrTime = expArrTime + datetime.timedelta(days=1)
+            actDeptTime = ''
+            actArrTime = ''
+            if 'actualTakeoffTime' in flight:
+                actDeptTime = flight['actualTakeoffTime']
+                actDeptTime = datetime.datetime(flightDate.year, flightDate.month, flightDate.day,
+                                                int(actDeptTime.split(':')[0]),
+                                                int(actDeptTime.split(':')[1]))
+                if 'actualArriveTime' in flight:
+                    actArrTime = flight['actualArriveTime']
+                    actArrTime = datetime.datetime(flightDate.year, flightDate.month, flightDate.day,
+                                                   int(actArrTime.split(':')[0]),
+                                                   int(actArrTime.split(':')[1]))
+                    if actDeptTime > actArrTime:
+                        actArrTime = actArrTime + datetime.timedelta(days=1)
+                    actArrTime = actArrTime.strftime("%Y-%m-%d %H:%M:%S")
+                    actDeptTime = actDeptTime.strftime("%Y-%m-%d %H:%M:%S")
+
             status = flight['flightStaus']
 
             airlineCorp = '四川航空'

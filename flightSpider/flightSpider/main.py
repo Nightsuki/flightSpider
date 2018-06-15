@@ -9,6 +9,6 @@ import os
 
 # execute(["scrapy", "crawl", "FeiChangZhun"])
 
-flightNo = 'JD5587'
-flightDate = "2018-06-11"
-execute(["scrapy", "crawl", "FeiChangZhun", '-a', 'flightNo=' + flightNo, '-a', 'flightDate=' + flightDate])
+flightNo = 'ZH9506'
+flightDate = "2018-06-14"
+execute(["scrapy", "crawl", "ShenZhen", '-a', 'flightNo=' + flightNo, '-a', 'flightDate=' + flightDate])

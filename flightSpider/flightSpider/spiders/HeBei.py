@@ -1,4 +1,5 @@
 # coding=utf-8
+import datetime
 import json
 
 import scrapy
@@ -42,7 +43,8 @@ class HeBeiSpider(scrapy.Spider):
         yield scrapy.Request(url=url, callback=self.parse)
 
     def parse(self, response):
-        selector = scrapy.Selector(text=response.body)
+        # selector = scrapy.Selector(text=response.body)
+        flightDate = datetime.datetime.strptime(self.flightDate, '%Y-%m-%d')
         flights = json.loads(response.body)
         for flight in flights:
             item = HeBeiItems()
@@ -58,7 +60,30 @@ class HeBeiSpider(scrapy.Spider):
             expDeptTime = flight['std']
             expArrTime = flight['sta']
             actDeptTime = flight['atd']
+            actDeptTimeStr = actDeptTime
             actArrTime = flight['ata']
+
+            expDeptTime = datetime.datetime(flightDate.year, flightDate.month, flightDate.day,
+                                            int(expDeptTime.split(':')[0]),
+                                            int(expDeptTime.split(':')[1]))
+            expArrTime = datetime.datetime(flightDate.year, flightDate.month, flightDate.day,
+                                           int(expArrTime.split(':')[0]),
+                                           int(expArrTime.split(':')[1]))
+            if expDeptTime > expArrTime:
+                expArrTime = expArrTime + datetime.timedelta(days=1)
+            if actDeptTime is not None:
+                actDeptTime = datetime.datetime(flightDate.year, flightDate.month, flightDate.day,
+                                                int(actDeptTime.split(':')[0]),
+                                                int(actDeptTime.split(':')[1]))
+                actDeptTimeStr = actDeptTime.strftime("%Y-%m-%d %H:%M:%S")
+            if actArrTime is not None:
+                actArrTime = datetime.datetime(flightDate.year, flightDate.month, flightDate.day,
+                                               int(actArrTime.split(':')[0]),
+                                               int(actArrTime.split(':')[1]))
+                if actDeptTime > actArrTime:
+                    actArrTime = actArrTime + datetime.timedelta(days=1)
+                    actArrTime = actArrTime.strftime("%Y-%m-%d %H:%M:%S")
+
             status = flight['state']
             if actDeptTime != '':
                 status = '起飞'
@@ -71,7 +96,7 @@ class HeBeiSpider(scrapy.Spider):
             item['status'] = status
             item['expDeptTime'] = expDeptTime
             item['expArrTime'] = expArrTime
-            item['actDeptTime'] = actDeptTime
+            item['actDeptTime'] = actDeptTimeStr
             item['actArrTime'] = actArrTime
             yield item
         pass

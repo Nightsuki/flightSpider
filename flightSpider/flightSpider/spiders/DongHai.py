@@ -1,4 +1,5 @@
 # coding=utf-8
+import datetime
 import json
 
 import scrapy
@@ -58,4 +59,17 @@ class DongHaiSpider(scrapy.Spider):
             item['expArrTime'] = expArrTime
             item['actDeptTime'] = actDeptTime
             item['actArrTime'] = actArrTime
+
+            if item['expDeptTime'] != '':
+                item['expDeptTime'] = datetime.datetime.strptime(item['expDeptTime'], '%Y-%m-%d %H:%M:%S.%f').strftime(
+                    "%Y-%m-%d %H:%M:%S")
+            if item['expArrTime'] != '':
+                item['expArrTime'] = datetime.datetime.strptime(item['expArrTime'], '%Y-%m-%d %H:%M:%S.%f').strftime(
+                    "%Y-%m-%d %H:%M:%S")
+            if item['actDeptTime'] != '':
+                item['actDeptTime'] = datetime.datetime.strptime(item['actDeptTime'], '%Y-%m-%d %H:%M:%S.%f').strftime(
+                    "%Y-%m-%d %H:%M:%S")
+            if item['actArrTime'] != '':
+                item['actArrTime'] = datetime.datetime.strptime(item['actArrTime'], '%Y-%m-%d %H:%M:%S.%f').strftime(
+                    "%Y-%m-%d %H:%M:%S")
             yield item

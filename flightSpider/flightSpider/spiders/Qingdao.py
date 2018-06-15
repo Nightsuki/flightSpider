@@ -1,3 +1,5 @@
+import datetime
+
 import scrapy
 
 from ..Item.QingdaoItems import QingdaoItems
@@ -27,28 +29,45 @@ class QingDaoSpider(scrapy.Spider):
 
     def parse(self, response):
         item = QingdaoItems()
+        flightDate = datetime.datetime.strptime(self.flightDate, '%Y-%m-%d')
         selector = scrapy.Selector(response)
-        airlineCorp = selector.xpath('//*[@id="content"]/div/div/div[4]/table/tbody/tr/td[1]/span[1]/text()').extract()[
-            0]
-        item['airlineCorp'] = airlineCorp
-        airline = selector.xpath('//*[@id="content"]/div/div/div[4]/table/tbody/tr/td[1]/span[2]/text()').extract()[0]
-        item['airline'] = airline
-        expDeptTime = selector.xpath('//*[@id="content"]/div/div/div[4]/table/tbody/tr/td[2]/span[1]/text()').extract()[
-            0]
-        item['expDeptTime'] = expDeptTime
-        expArrTime = selector.xpath('//*[@id="content"]/div/div/div[4]/table/tbody/tr/td[2]/span[2]/text()').extract()[
-            0]
-        item['expArrTime'] = expArrTime
-        actDeptTime = selector.xpath('//*[@id="content"]/div/div/div[4]/table/tbody/tr/td[3]/span[1]/text()').extract()[
-            0]
-        item['actDeptTime'] = actDeptTime
-        actArrTime = selector.xpath('//*[@id="content"]/div/div/div[4]/table/tbody/tr/td[3]/span[1]/text()').extract()[
-            0]
-        item['actArrTime'] = actArrTime
-        status = selector.xpath('//*[@id="content"]/div/div/div[4]/table/tbody/tr/td[4]/span/text()').extract()[
-            0].replace("\r", "").replace("\t", "").replace("\n", "")
-        item['status'] = status
-        yield item
-        print(airlineCorp)
-
-        pass
+        flights = selector.xpath('//*[@id="content"]/div/div/div[4]/table/tbody/tr')
+        for flight in flights:
+            airlineCorp = flight.xpath('./td[1]/span[1]/text()').extract_first()
+            airline = flight.xpath('./td[1]/span[2]/text()').extract_first()
+            expDeptTime = flight.xpath('./td[2]/span[1]/text()').extract_first()
+            expArrTime = flight.xpath('./td[2]/span[2]/text()').extract_first()
+            actDeptTime = flight.xpath('./td[3]/span[1]/text()').extract_first()
+            actDeptTimeStr = actDeptTime
+            actArrTime = flight.xpath('./td[3]/span[2]/text()').extract_first()
+            expDeptTime = datetime.datetime(flightDate.year, flightDate.month, flightDate.day,
+                                            int(expDeptTime.split(':')[0]),
+                                            int(expDeptTime.split(':')[1]))
+            expArrTime = datetime.datetime(flightDate.year, flightDate.month, flightDate.day,
+                                           int(expArrTime.split(':')[0]),
+                                           int(expArrTime.split(':')[1]))
+            if expDeptTime > expArrTime:
+                expArrTime = expArrTime + datetime.timedelta(days=1)
+            if actDeptTime != '-':
+                actDeptTime = datetime.datetime(flightDate.year, flightDate.month, flightDate.day,
+                                                int(actDeptTime.split(':')[0]),
+                                                int(actDeptTime.split(':')[1]))
+                actDeptTime = actDeptTime
+                actDeptTimeStr = actDeptTime.strftime("%Y-%m-%d %H:%M:%S")
+            if actArrTime != '-':
+                actArrTime = datetime.datetime(flightDate.year, flightDate.month, flightDate.day,
+                                               int(actArrTime.split(':')[0]),
+                                               int(actArrTime.split(':')[1]))
+                if actDeptTime > actArrTime:
+                    actArrTime = actArrTime + datetime.timedelta(days=1)
+                    actArrTime = actArrTime.strftime("%Y-%m-%d %H:%M:%S")
+            status = flight.xpath('./td[4]/span/text()').extract_first().replace("\r", "").replace("\t", "").replace(
+                "\n", "")
+            item['airline'] = airline
+            item['expDeptTime'] = expDeptTime.strftime("%Y-%m-%d %H:%M:%S")
+            item['airlineCorp'] = airlineCorp
+            item['expArrTime'] = expArrTime.strftime("%Y-%m-%d %H:%M:%S")
+            item['status'] = status
+            item['actDeptTime'] = actDeptTimeStr
+            item['actArrTime'] = actArrTime
+            yield item

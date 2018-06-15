@@ -5,16 +5,32 @@ import json
 import scrapy
 from ..Item.NanFangItems import NanFangItems
 
+# case "DLY" :
+# 					result = [flLang.fs019,flLang.fs019]
+# 				break;
+# 				case "AIR" :
+# 					result = [flLang.fs020,flLang.fs019]
+# 				break;
+# 				case "ARV" :
+# 					result =  [flLang.fs020,flLang.fs020]
+# 				break;
+# 				case "SCH" :
+# 					result = [flLang.fs019,flLang.fs019]
+# 				break;
+# 				case "ALT" :
+# 					result =  [flLang.fs020,flLang.fs020]
+# 				break;
+# 				case "REV" :
+# 					result =  [flLang.fs020,flLang.fs020]
 statusMsg = {
-    "ARR": "落地",
-    "NDR": "落地",
-    "ATA": "到达",
-    "CNL": "取消",
-    "DEL": "延误",
-    "DEP": "起飞",
-    "RTR": "返航",
+    "DLY": "延误",
+    "AIR": "起飞",
+    "ARV": "到达",
     "SCH": "计划",
-    "AIR": "起飞"
+    "CNL": "取消",
+    "ALT": "备降",
+    "REV": "返航",
+
 }
 
 
@@ -49,6 +65,18 @@ class NanFangSpider(scrapy.Spider):
             # ARR 落地 NDR 落地 ATA 到达 CNL 取消 DEL 延误 DEP 起飞 RTR 返航 SCH 计划
             status = statusMsg[flight['fltSts']]
             airlineCorp = '南方航空'
+
+            expDeptTime = datetime.datetime.strptime(expDeptTime,
+                                                     '%Y-%m-%d %H:%M').strftime("%Y-%m-%d %H:%M:%S")
+            expArrTime = datetime.datetime.strptime(expArrTime,
+                                                    '%Y-%m-%d %H:%M').strftime("%Y-%m-%d %H:%M:%S")
+
+            if actDeptTime != '':
+                actDeptTime = datetime.datetime.strptime(actDeptTime, '%Y-%m-%d %H:%M').strftime("%Y-%m-%d %H:%M:%S")
+
+            if actArrTime != '':
+                actArrTime = datetime.datetime.strptime(actArrTime, '%Y-%m-%d %H:%M').strftime("%Y-%m-%d %H:%M:%S")
+
             item['airline'] = airline
             item['airlineCorp'] = airlineCorp
             item['status'] = status

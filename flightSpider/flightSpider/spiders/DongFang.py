@@ -1,5 +1,6 @@
 # coding=utf-8
 import json
+import re
 
 import scrapy
 
@@ -34,7 +35,8 @@ class DongFangSpider(scrapy.Spider):
         flight = js['flightDetail']
         print(str(flight))
         item = DongFangItems()
-        airline = flight['flightNoDisp'].replace("&", "")
+        airline = flight['flightNoDisp']
+        airline = re.sub("\W", "", airline)
         expDeptTime = flight['planDeptTime']
         expArrTime = flight['planArrTime']
         actDeptTime = flight['realDeptTime']
@@ -53,4 +55,3 @@ class DongFangSpider(scrapy.Spider):
         item['actDeptTime'] = actDeptTime
         item['actArrTime'] = actArrTime
         yield item
-        pass

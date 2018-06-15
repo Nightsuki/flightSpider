@@ -22,23 +22,23 @@ class ShangDongSpider(scrapy.Spider):
     def parse(self, response):
         selector = scrapy.Selector(response)
         flights = selector.xpath('//table/tbody/tr')
-        for i, flight in enumerate(flights):
+        for flight in flights:
             # flightInfo = flight.extract()
             # print(flightInfo)
             item = ShanDongItems()
-            i += 1
+            # i += 1
             item['airlineCorp'] = '山东航空'
-            flightNo = flight.xpath('//tr[' + str(i) + ']/td[1]/text()').extract_first(default='')
+            flightNo = flight.xpath('./td[1]/text()').extract_first(default='')
             item['airline'] = flightNo
-            expDeptTime = flight.xpath('//tr[' + str(i) + ']/td[5]/text()').extract_first(default='')
+            expDeptTime = flight.xpath('./td[5]/text()').extract_first(default='')
             item['expDeptTime'] = expDeptTime
-            expArrTime = flight.xpath('//tr[' + str(i) + ']/td[9]/text()').extract_first(default='')
+            expArrTime = flight.xpath('./td[9]/text()').extract_first(default='')
             item['expArrTime'] = expArrTime
-            actDeptTime = flight.xpath('//tr[' + str(i) + ']/td[6]/text()').extract_first(default='')
+            actDeptTime = flight.xpath('./td[6]/text()').extract_first(default='')
             item['actDeptTime'] = actDeptTime
-            actArrTime = flight.xpath('//tr[' + str(i) + ']/td[10]/text()').extract_first(default='')
+            actArrTime = flight.xpath('./td[10]/text()').extract_first(default='')
             item['actArrTime'] = actArrTime
-            item['status'] = flight.xpath('//tr[' + str(i) + ']/td[11]/text()').extract_first(default='')
+            item['status'] = flight.xpath('./td[11]/text()').extract_first(default='')
             # print(flightNo + expDeptTime + expArrTime + actDeptTime + actArrTime)
             yield item
 

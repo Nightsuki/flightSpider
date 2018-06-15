@@ -2,7 +2,7 @@
 import random
 from ..settings import IPPOOL
 from scrapy.downloadermiddlewares.httpproxy import HttpProxyMiddleware
-
+import logging
 
 class MyproxiesSpiderMiddleware(HttpProxyMiddleware):
 
@@ -11,5 +11,5 @@ class MyproxiesSpiderMiddleware(HttpProxyMiddleware):
 
     def process_request(self, request, spider):
         thisip = random.choice(IPPOOL)
-        print(thisip)
+        logging.info(thisip)
         request.meta["proxy"] = "http://" + thisip["ipaddr"]

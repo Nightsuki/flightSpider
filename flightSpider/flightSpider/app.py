@@ -2,6 +2,8 @@ import logging
 import os
 
 from flask import Flask, jsonify, abort, signals
+from scrapy.cmdline import execute
+
 from flightSpider.flightSpider.dao.FlightDao import FlightDao
 
 app = Flask(__name__)
@@ -13,13 +15,13 @@ spiders = {
     "BK": "AoKai",
     "HU": "HaiNan",
     "JD": "ShouDu",
-    "GS": "HaiNan",
+    # "GS": "HaiNan",
     "CN": "HaiNan",
     # "PN": "HaiNan",
     # "8L": "HaiNan",
     # "JD": "HaiNan",
-    "UO": "HaiNan",
-    "HX": "HaiNan",
+    # "UO": "HaiNan",
+    # "HX": "HaiNan",
     "MF": "XiaMen",
     "MU": "DongFang",
     "CZ": "NanFang",
@@ -34,7 +36,7 @@ spiders = {
     "DZ": "DongHai",
     "QW": "QingDao",
     "RY": "JiangXi",
-    "ZH": "ShenZhen",
+    # "ZH": "ShenZhen",
 }
 
 
@@ -49,6 +51,7 @@ def getFlightInfo(flightNo, flightDate):
         dao = FlightDao()
         dao.clearFlight(flightNo)
         os.system('scrapy crawl ' + spider + ' -a flightNo=' + flightNo + ' -a flightDate=' + flightDate)
+        # execute(["scrapy", "crawl", spider, '-a', 'flightNo=' + flightNo, '-a', 'flightDate=' + flightDate])
         result = dao.searchFlight(flightNo)
         return jsonify({'flight': result})
     except Exception as error:

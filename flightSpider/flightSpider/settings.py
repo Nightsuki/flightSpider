@@ -23,7 +23,7 @@ BOT_NAME = 'flightSpider'
 
 SPIDER_MODULES = ['flightSpider.spiders']
 NEWSPIDER_MODULE = 'flightSpider.spiders'
-DOWNLOAD_TIMEOUT = 5
+DOWNLOAD_TIMEOUT = 10
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 # USER_AGENT = 'flightSpider (+http://www.yourdomain.com)'
 # USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.'

@@ -54,5 +54,16 @@ class LianHeSpider(scrapy.Spider):
             item['actDeptTime'] = flight['atd']
             item['actArrTime'] = flight['ata']
             item['status'] = flight['status']
+            if item['expDeptTime'] != '':
+                item['expDeptTime'] = datetime.datetime.strptime(item['expDeptTime'], '%Y%m%d %H:%M').strftime(
+                    "%Y-%m-%d %H:%M:%S")
+            if item['expArrTime'] != '':
+                item['expArrTime'] = datetime.datetime.strptime(item['expArrTime'], '%Y%m%d %H:%M').strftime(
+                    "%Y-%m-%d %H:%M:%S")
+            if item['actDeptTime'] != '':
+                item['actDeptTime'] = datetime.datetime.strptime(item['actDeptTime'], '%Y%m%d %H:%M').strftime(
+                    "%Y-%m-%d %H:%M:%S")
+            if item['actArrTime'] != '':
+                item['actArrTime'] = datetime.datetime.strptime(item['actArrTime'], '%Y%m%d %H:%M').strftime(
+                    "%Y-%m-%d %H:%M:%S")
             yield item
-        pass
